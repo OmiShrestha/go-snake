@@ -1,6 +1,6 @@
 # Snake Game
 
-This is a terminal-based Snake game implemented in Go using the `termbox-go` library.
+This is a terminal-based Snake game implemented in Go using the `termbox-go` library. The game includes additional features like obstacles, portals, and a scoring system.
 
 ## Prerequisites
 
@@ -40,14 +40,25 @@ Follow these steps to run the Snake game:
 ## Controls
 
 - **Arrow Keys**: Control the direction of the snake.
+- **Space**: Pause or resume the game.
 - **ESC**: Exit the game.
+
+## Features
+
+- **Obstacles**: Randomly generated obstacles (`?`) that the snake must avoid.
+- **Portals**: Entry (`O`) and exit points that teleport the snake to a different location.
+- **Scoring**: Earn points by eating food (`*`).
+- **Game Over Conditions**:
+  - Collision with walls, itself, or obstacles.
+  - Exiting the game manually.
 
 ## How the Game Works
 
 - The snake moves continuously in the current direction.
 - Use the arrow keys to change the direction of the snake.
-- The game ends if the snake collides with the walls or itself.
-- The goal is to eat the food (`*`) to grow the snake.
+- The game ends if the snake collides with the walls, itself, or obstacles.
+- The goal is to eat the food (`*`) to grow the snake and increase your score.
+- Portals allow the snake to teleport between two points on the board.
 
 ## Troubleshooting
 
