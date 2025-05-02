@@ -1,6 +1,6 @@
-# Snake Game
+# Go-Snake
 
-This is a terminal-based Snake game implemented in Go using the `termbox-go` library. The game includes additional features like obstacles, portals, and a scoring system.
+This is a terminal-based Snake game implemented in Go using the `termbox-go` library. The game includes numerous features like obstacles, portals, and a scoring system.
 
 ## Prerequisites
 
@@ -73,7 +73,3 @@ Follow these steps to run the Snake game:
 
 3. **Terminal Issues**:
    Ensure your terminal supports the `termbox-go` library. If the game does not render correctly, try a different terminal emulator.
-
-## License
-
-This project is open-source and available under the MIT License.
