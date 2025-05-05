@@ -59,6 +59,32 @@ func NewGame() *Game {
 	}
 }
 
+// Function to set the size of the game board manually
+func SetGameBoardSize(width, height int) *Game {
+	// Ensure the provided dimensions are valid
+	if width <= 0 || height <= 0 {
+		panic("Width and height must be positive integers")
+	}
+
+	s := []Point{{width / 2, height / 2}}            // Initialize the snake at the center
+	obstacles := generateObstacles(width, height, s) // Generate obstacles
+
+	portal := Portal{
+		Entry: randomPoint(width, height, append(s, obstacles...)),
+		Exit:  randomPoint(width, height, append(s, obstacles...)),
+	}
+
+	return &Game{
+		snake:     s,
+		direction: Point{1, 0}, // Initial direction: right
+		food:      randomFood(width, height, append(s, obstacles...)),
+		width:     width,
+		height:    height,
+		obstacles: obstacles,
+		portal:    portal,
+	}
+}
+
 // Generates random obstacles on the board
 func generateObstacles(w, h int, snake []Point) []Point {
 	obstacles := []Point{}
