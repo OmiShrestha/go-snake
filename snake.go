@@ -90,7 +90,7 @@ func generateObstacles(w, h int, snake []Point) []Point {
 	obstacles := []Point{}
 	for i := 0; i < 20; i++ { // Generates 20 obstacles
 		for {
-			p := Point{rng.Intn(w), rng.Intn(h)}
+			p := Point{rng.Intn(w-2) + 1, rng.Intn(h-2) + 1} // Ensure obstacles are inside the borders
 			conflict := false
 			// Ensure obstacles do not overlap with the snake or other obstacles
 			for _, s := range snake {
@@ -271,7 +271,7 @@ func (g *Game) pollEvents() {
 // Generates a random position for the food
 func randomFood(w, h int, snake []Point) Point {
 	for {
-		p := Point{rng.Intn(w), rng.Intn(h)}
+		p := Point{rng.Intn(w-2) + 1, rng.Intn(h-2) + 1} // Ensure food is inside the borders
 		conflict := false
 		// Ensure the food does not overlap with the snake
 		for _, s := range snake {
@@ -286,10 +286,10 @@ func randomFood(w, h int, snake []Point) Point {
 	}
 }
 
-// Generates a random positions for the portal
+// Generates a random position for the portal
 func randomPoint(w, h int, occupied []Point) Point {
 	for {
-		p := Point{rng.Intn(w), rng.Intn(h)}
+		p := Point{rng.Intn(w-2) + 1, rng.Intn(h-2) + 1} // Ensure portal is inside the borders
 		conflict := false
 		// Ensure the portal does not overlap with occupied points
 		for _, o := range occupied {
