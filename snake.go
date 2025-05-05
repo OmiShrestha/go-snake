@@ -62,7 +62,7 @@ func NewGame() *Game {
 // Generates random obstacles on the board
 func generateObstacles(w, h int, snake []Point) []Point {
 	obstacles := []Point{}
-	for i := 0; i < 10; i++ { // Generate 10 obstacles
+	for i := 0; i < 20; i++ { // Generates 20 obstacles
 		for {
 			p := Point{rng.Intn(w), rng.Intn(h)}
 			conflict := false
