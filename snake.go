@@ -129,7 +129,7 @@ func generateObstacles(w, h int, snake []Point) []Point {
 
 // Main game loop
 func (g *Game) Run() {
-	ticker := time.NewTicker(g.getTickInterval()) // Game tick interval
+	ticker := time.NewTicker(g.getTickInterval(false)) // Game tick interval
 	defer ticker.Stop()
 
 	go g.pollEvents() // Start listening for user input
@@ -144,10 +144,13 @@ func (g *Game) Run() {
 	time.Sleep(2 * time.Second) // Pause before exiting
 }
 
-// Adjust the game tick interval based on the current level
-func (g *Game) getTickInterval() time.Duration {
+// Adjust the game tick interval based on the current level and key hold
+func (g *Game) getTickInterval(isKeyHeld bool) time.Duration {
 	baseInterval := 120 * time.Millisecond
 	levelFactor := time.Duration(g.level) * 10 * time.Millisecond
+	if isKeyHeld {
+		return (baseInterval - levelFactor) / 2 // Increase speed when key is held
+	}
 	return baseInterval - levelFactor
 }
 
