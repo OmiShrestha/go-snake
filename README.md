@@ -52,6 +52,13 @@ Follow these steps to run the Snake game:
   - Collision with walls, itself, or obstacles.
   - Exiting the game manually.
 
+## High Score Feature
+
+- The game now tracks the highest score achieved across sessions.
+- The high score is saved to a file named `highscore.txt` in the project directory.
+- Each time the game starts, it loads the previous high score from this file.
+- If a new high score is achieved, it updates the file automatically.
+
 ## How the Game Works
 
 - The snake moves continuously in the current direction.
