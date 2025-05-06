@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"math/rand"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/nsf/termbox-go"
@@ -10,6 +13,8 @@ import (
 
 // Replace global random generator with a local one
 var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+const highScoreFile = "highscore.txt"
 
 // Represents a point in 2D space
 // Used for the snake's body, food, obstacles, and portals
@@ -35,6 +40,7 @@ type Game struct {
 	paused    bool    // Indicates if the game is paused
 	obstacles []Point // Positions of obstacles
 	portal    Portal  // Portal entry and exit points
+	highScore int     // Highest score achieved
 }
 
 // Initializes a new game instance
@@ -48,7 +54,7 @@ func NewGame() *Game {
 		Exit:  randomPoint(w, h, append(s, obstacles...)),
 	}
 
-	return &Game{
+	game := &Game{
 		snake:     s,
 		direction: Point{1, 0}, // Initial direction: right
 		food:      randomFood(w, h, append(s, obstacles...)),
@@ -57,6 +63,9 @@ func NewGame() *Game {
 		obstacles: obstacles,
 		portal:    portal,
 	}
+
+	game.LoadHighScore() // Load high score from file
+	return game
 }
 
 // Function to set the size of the game board manually
@@ -74,7 +83,7 @@ func SetGameBoardSize(width, height int) *Game {
 		Exit:  randomPoint(width, height, append(s, obstacles...)),
 	}
 
-	return &Game{
+	game := &Game{
 		snake:     s,
 		direction: Point{1, 0}, // Initial direction: right
 		food:      randomFood(width, height, append(s, obstacles...)),
@@ -83,12 +92,15 @@ func SetGameBoardSize(width, height int) *Game {
 		obstacles: obstacles,
 		portal:    portal,
 	}
+
+	game.LoadHighScore() // Load high score from file
+	return game
 }
 
 // Generates random obstacles on the board
 func generateObstacles(w, h int, snake []Point) []Point {
 	obstacles := []Point{}
-	for i := 0; i < 20; i++ { // Generates 20 obstacles
+	for i := 0; i < 15; i++ { // Generates 20 obstacles
 		for {
 			p := Point{rng.Intn(w-2) + 1, rng.Intn(h-2) + 1} // Ensure obstacles are inside the borders
 			conflict := false
@@ -126,6 +138,7 @@ func (g *Game) Run() {
 		g.update() // Update game state
 		g.draw()   // Render the game
 	}
+	g.SaveHighScore()           // Save high score to file
 	g.drawGameOver()            // Display game over screen
 	time.Sleep(2 * time.Second) // Pause before exiting
 }
@@ -139,20 +152,24 @@ func (g *Game) update() {
 	head := g.snake[0]                                               // Get the current head of the snake
 	newHead := Point{head.X + g.direction.X, head.Y + g.direction.Y} // Calculate new head position
 
-	// Check for collisions
-	if newHead.X < 0 || newHead.Y < 0 || newHead.X >= g.width || newHead.Y >= g.height {
-		g.gameOver = true // Collision with walls
+	// Check for collisions with borders (snake cannot walk on borders)
+	if newHead.X <= 0 || newHead.Y <= 0 || newHead.X >= g.width-1 || newHead.Y >= g.height-1 {
+		g.gameOver = true // Collision with walls (including borders)
 		return
 	}
+
+	// Check for collisions with itself
 	for _, p := range g.snake {
 		if p == newHead {
-			g.gameOver = true // Collision with itself
+			g.gameOver = true
 			return
 		}
 	}
+
+	// Check for collisions with obstacles
 	for _, o := range g.obstacles {
 		if o == newHead {
-			g.gameOver = true // Collision with obstacles
+			g.gameOver = true
 			return
 		}
 	}
@@ -169,6 +186,9 @@ func (g *Game) update() {
 	if newHead == g.food {
 		g.food = randomFood(g.width, g.height, append(g.snake, g.obstacles...)) // Generate new food
 		g.score++                                                               // Increase score
+		if g.score > g.highScore {
+			g.highScore = g.score // Update high score if beaten
+		}
 	} else {
 		g.snake = g.snake[:len(g.snake)-1] // Remove the tail
 	}
@@ -221,6 +241,12 @@ func (g *Game) draw() {
 	scoreStr := fmt.Sprintf("Score: %d", g.score)
 	for i, c := range scoreStr {
 		termbox.SetCell(i+1, 1, c, termbox.ColorYellow, termbox.ColorDefault)
+	}
+
+	// Display high score
+	highScoreStr := fmt.Sprintf("High Score: %d", g.highScore)
+	for i, c := range highScoreStr {
+		termbox.SetCell(i+1, 2, c, termbox.ColorCyan, termbox.ColorDefault)
 	}
 
 	termbox.Flush() // Render the changes
@@ -302,4 +328,23 @@ func randomPoint(w, h int, occupied []Point) Point {
 			return p
 		}
 	}
+}
+
+// LoadHighScore loads the high score from a file
+func (g *Game) LoadHighScore() {
+	data, err := ioutil.ReadFile(highScoreFile)
+	if err == nil {
+		highScore, err := strconv.Atoi(string(data))
+		if err == nil {
+			g.highScore = highScore
+		}
+	}
+}
+
+// SaveHighScore saves the high score to a file
+func (g *Game) SaveHighScore() {
+	if g.score > g.highScore {
+		g.highScore = g.score
+	}
+	_ = ioutil.WriteFile(highScoreFile, []byte(strconv.Itoa(g.highScore)), os.ModePerm)
 }
