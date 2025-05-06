@@ -59,6 +59,12 @@ Follow these steps to run the Snake game:
 - Each time the game starts, it loads the previous high score from this file.
 - If a new high score is achieved, it updates the file automatically.
 
+## Dynamic Leveling and Obstacles
+
+- The game dynamically increases the level as the score increases.
+- New obstacles are added to the game board with each level-up, making the game progressively more challenging.
+- The level increases every 2 points scored.
+
 ## How the Game Works
 
 - The snake moves continuously in the current direction.
