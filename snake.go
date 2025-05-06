@@ -41,6 +41,7 @@ type Game struct {
 	obstacles []Point // Positions of obstacles
 	portal    Portal  // Portal entry and exit points
 	highScore int     // Highest score achieved
+	level     int     // Current level of the game
 }
 
 // Initializes a new game instance
@@ -100,7 +101,7 @@ func SetGameBoardSize(width, height int) *Game {
 // Generates random obstacles on the board
 func generateObstacles(w, h int, snake []Point) []Point {
 	obstacles := []Point{}
-	for i := 0; i < 15; i++ { // Generates 20 obstacles
+	for i := 0; i < 5; i++ { // Generates obstacles
 		for {
 			p := Point{rng.Intn(w-2) + 1, rng.Intn(h-2) + 1} // Ensure obstacles are inside the borders
 			conflict := false
@@ -128,7 +129,7 @@ func generateObstacles(w, h int, snake []Point) []Point {
 
 // Main game loop
 func (g *Game) Run() {
-	ticker := time.NewTicker(120 * time.Millisecond) // Game tick interval
+	ticker := time.NewTicker(g.getTickInterval()) // Game tick interval
 	defer ticker.Stop()
 
 	go g.pollEvents() // Start listening for user input
@@ -143,6 +144,13 @@ func (g *Game) Run() {
 	time.Sleep(2 * time.Second) // Pause before exiting
 }
 
+// Adjust the game tick interval based on the current level
+func (g *Game) getTickInterval() time.Duration {
+	baseInterval := 120 * time.Millisecond
+	levelFactor := time.Duration(g.level) * 10 * time.Millisecond
+	return baseInterval - levelFactor
+}
+
 // Updates the game state
 func (g *Game) update() {
 	if g.paused {
@@ -152,9 +160,9 @@ func (g *Game) update() {
 	head := g.snake[0]                                               // Get the current head of the snake
 	newHead := Point{head.X + g.direction.X, head.Y + g.direction.Y} // Calculate new head position
 
-	// Check for collisions with borders (snake cannot walk on borders)
-	if newHead.X <= 0 || newHead.Y <= 0 || newHead.X >= g.width-1 || newHead.Y >= g.height-1 {
-		g.gameOver = true // Collision with walls (including borders)
+	// Check for collisions with borders (snake can now touch the borders without dying)
+	if newHead.X < 0 || newHead.Y < 0 || newHead.X >= g.width || newHead.Y >= g.height {
+		g.gameOver = true // Collision with walls (outside the borders)
 		return
 	}
 
@@ -189,8 +197,20 @@ func (g *Game) update() {
 		if g.score > g.highScore {
 			g.highScore = g.score // Update high score if beaten
 		}
+		g.checkLevelUp() // Check if level needs to be increased
 	} else {
 		g.snake = g.snake[:len(g.snake)-1] // Remove the tail
+	}
+}
+
+// Increase the level and add more obstacles as the score increases
+func (g *Game) checkLevelUp() {
+	newLevel := g.score / 2 // Increase level every 2 points
+	if newLevel > g.level {
+		g.level = newLevel
+		// Add more obstacles dynamically
+		newObstacles := generateObstacles(g.width, g.height, append(g.snake, g.obstacles...))
+		g.obstacles = append(g.obstacles, newObstacles...)
 	}
 }
 
