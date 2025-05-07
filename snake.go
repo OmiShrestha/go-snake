@@ -1,3 +1,7 @@
+/*
+ * Author: Omi Shrestha
+ */
+
 package main
 
 import (
