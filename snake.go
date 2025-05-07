@@ -212,7 +212,7 @@ func (g *Game) update() {
 
 // Increase the level and add more obstacles as the score increases
 func (g *Game) checkLevelUp() {
-	newLevel := g.score / 2 // Increase level every 2 points
+	newLevel := g.score / 5 // Increase level every ? points
 	if newLevel > g.level {
 		g.level = newLevel
 		// Add more obstacles dynamically
