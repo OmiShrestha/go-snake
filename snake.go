@@ -1,5 +1,6 @@
 /*
- * Author: Omi Shrestha
+ * Author: Omi Shrestha (work.omishrestha@gmail.com)
+ * Description: A simple snake game implemented in Go using the termbox library.
  */
 
 package main
