@@ -2,6 +2,35 @@
 
 This is a terminal-based Snake game implemented in Go using the `termbox-go` library. The game includes numerous features like obstacles, portals, and a scoring system.
 
+## Installation
+
+If you are new to Go, follow these steps to install and run the game quickly:
+
+1. **Install Go**: Download and install Go from [golang.org](https://golang.org/dl/).
+2. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd gosnake
+   ```
+3. **Install Dependencies**:
+   ```bash
+   go mod tidy
+   ```
+4. **Build the Game**:
+   ```bash
+   go build -o gosnake main.go snake.go
+   ```
+5. **Run the Game**:
+   ```bash
+   ./gosnake
+   ```
+
+## Screenshot
+
+Below is a screenshot of the game running in the terminal:
+
+![Go-Snake Screenshot](screenshot.png)
+
 ## Prerequisites
 
 To run this game, ensure you have the following installed on your system:
